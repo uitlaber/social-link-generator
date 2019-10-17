@@ -1,8 +1,17 @@
 <template>
   <div class="wrapper">
-   <div ><VueInput v-model="iconpath" icon-left="link" placeholder="Путь к иконкам" style="width:100%; margin-bottom: .5rem"/> </div>
-   <div ><VueInput v-model="iconsize" icon-left="star" placeholder="Размер иконки" style="width:100%"/> </div>
-    <hr/>
+    <div>
+      <VueInput
+        v-model="iconpath"
+        icon-left="link"
+        placeholder="Путь к иконкам"
+        style="width:100%; margin-bottom: .5rem"
+      />
+    </div>
+    <div>
+      <VueInput v-model="iconsize" icon-left="star" placeholder="Размер иконки" style="width:100%"/>
+    </div>
+    <hr>
     <div class="social-item" v-for="(item, key) in mysocials" :key="key">
       <VueSelect v-model="item.social" placeholder="Выбрать" style="width: 200px">
         <VueSelectButton
@@ -12,36 +21,46 @@
           :label="social.name"
           @click="setPlaceholder(item, social)"
         />
-      </VueSelect>      
+      </VueSelect>
       <VueInput v-model="item.url" placeholder="url"/>
-      <VueButton class="success" @click="addItem">Добавить</VueButton>
+      <VueButton
+        class="success"
+        v-if="key == Object.keys(mysocials).length-1"
+        @click="addItem"
+      >Добавить</VueButton>
+  
       <VueButton class="success" @click="removeItem(key)" v-if="key">Удалить</VueButton>
     </div>
     <hr>
     <div class="socials">
       <a :href="item.url" v-for="(item, key) in mysocials" :key="key">
-        <img :src="'/icons/'+item.social.icon" v-if="item.social" :style="`height:${iconsize}px;width:${iconsize}px;`">
+        <img
+          :src="'/icons/'+item.social.icon"
+          v-if="item.social"
+          :style="`height:${iconsize}px;width:${iconsize}px;`"
+        >
       </a>
     </div>
     <div class="html-code">
-        <VueInput type="textarea" rows="4" v-model="code" placeholder="Code" readonly style="width:100%" />
-        <hr/>
-        <VueButton class="success" v-clipboard:copy="code" v-clipboard:success="copied" >Скопировать</VueButton>
+      <VueInput
+        type="textarea"
+        rows="4"
+        v-model="code"
+        placeholder="Code"
+        readonly
+        style="width:100%"
+      />
+      <hr>
+      <VueButton class="success" v-clipboard:copy="code" v-clipboard:success="copied">Скопировать</VueButton>
     </div>
 
-    <VueModal
-        v-if="open"
-        class="small"
-        @close="open = false"
-      >
-        <div class="default-body" style="color: #42b983">
-          Код скопирован
-        </div>
+    <VueModal v-if="open" class="small" @close="open = false">
+      <div class="default-body" style="color: #42b983">Код скопирован</div>
 
-        <div slot="footer" class="actions">
-          <VueButton class="primary" @click="open = false">Ok</VueButton>
-        </div>
-      </VueModal>
+      <div slot="footer" class="actions">
+        <VueButton class="primary" @click="open = false">Ok</VueButton>
+      </div>
+    </VueModal>
   </div>
 </template>
 
@@ -49,26 +68,43 @@
 export default {
   name: "Social",
   computed: {
-   
-    code(){
+    code() {
       let html = '<div class="socials">';
-  
-      this.mysocials.map((item)=> {
-        if(item.social){
+
+      this.mysocials.map(item => {
+        if (item.social) {
           html += `<a href="${item.url}">
-          <img src="${this.iconpath + item.social.icon}" style="width: ${this.iconsize}px; height: ${this.iconsize}px;">
+          <img src="${this.iconpath + item.social.icon}" style="width: ${
+            this.iconsize
+          }px; height: ${this.iconsize}px;">
           </a>
           `;
         }
-      })
-      html += '</div>';
+      });
+      html += "</div>";
+      html += `<styles>.social-item {
+        display: flex;
+        margin-bottom: 1rem;
+      }
+      .social-item > * {
+        margin-right: .5rem;
+      }
+
+      .socials{
+        display: flex;
+        
+      }
+
+      .socials a {
+        margin: 0 5px;
+      }</styles>`;
       return html;
-    } 
+    }
   },
   data() {
     return {
       open: false,
-      iconpath: '', 
+      iconpath: "https://ko6du.csb.app/icons/",
       iconsize: 32,
       mysocials: [{ social: null, url: "" }],
       socials: [
@@ -115,7 +151,7 @@ export default {
     removeItem(key) {
       this.$delete(this.mysocials, key);
     },
-    copied(){
+    copied() {
       this.open = true;
     }
   }
@@ -132,15 +168,14 @@ export default {
   margin-bottom: 1rem;
 }
 .social-item > * {
-  margin-right: .5rem;
+  margin-right: 0.5rem;
 }
 
-.socials{
+.socials {
   display: flex;
-  
 }
 
 .socials a {
-   margin: 0 5px;
+  margin: 0 5px;
 }
 </style>
